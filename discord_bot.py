@@ -16,17 +16,24 @@ bot = commands.Bot(command_prefix='!')
 client = discord.Client()
 
 def get_hentai():
-    #get random tag to find hentai with
-    random_tag = ""
-    i = 0
-    while i < 4:
-        random_tag += str(randrange(10))
-        i += 1
 
-    #get hentai id with random tag
-    URL_search_tag = "https://nhentai.net/api/galleries/tagged?tag_id={}".format(random_tag)
-    tag = requests.get(url = URL_search_tag)
-    tag_data = tag.json()
+    no_valid_tag = True
+    #run loop until a valid tag is found
+    while no_valid_tag:
+        #get random tag to find hentai with
+        random_tag = ""
+        i = 0
+        while i < 4:
+            random_tag += str(randrange(10))
+            i += 1
+
+        #find hentai id with the random tag
+        URL_search_tag = "https://nhentai.net/api/galleries/tagged?tag_id={}".format(random_tag)
+        tag = requests.get(url = URL_search_tag)
+        tag_data = tag.json()
+        if "result" in tag_data.keys():
+            no_valid_tag = False
+
     media_data_list = tag_data["result"]
     media_id_data = media_data_list[0]
     id = media_id_data["id"]
