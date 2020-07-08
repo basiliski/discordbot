@@ -35,7 +35,7 @@ def get_hentai():
             no_valid_tag = False
 
     media_data_list = tag_data["result"]
-    media_id_data = media_data_list[0]
+    media_id_data = media_data_list[randrange(len(media_data_list))]
     id = media_id_data["id"]
     return id
 
