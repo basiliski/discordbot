@@ -1,5 +1,5 @@
 streamsource_text = "~ twist.moe\n+ muistaa mihin jäi\n+ clean interface\n+ hyvä laatu\n- joskus ruuhkaa ja bufferoi paljon\n\n~ animeultima.to\n+ Jaksot lataa nopeesti ja heti\n+ iso valikoima sarjoja\n- sivu ajoittain alhaalla\n- verkkosivu tosi hidas muuten\n\n~ animeflix.io\n+/- literally animeultima mutta muka hienommalla intefacella :smile:"
-help_text = "Konnichiwa!!\n!hello = I'll greet you back\n!streaming = I'll tell you good anime streaming sites\n!search (anime name here) = I'll respond with url to Mal and some information"
+help_text = "Konnichiwa!!\n!hello = I'll greet you back\n!streaming = I'll tell you good anime streaming sites\n!search (anime name here) = I'll respond with url to Mal and some information\n!hentai = <:Meguminlewd:725330104065982464>"
 token = 'token here'
 
 import json
@@ -52,7 +52,9 @@ async def on_message(message):
 
         id = get_hentai()
         #send hentai url to discord
-        await message.channel.send("https://nhentai.net/g/{}/".format(id))
+        hentai_message = await message.channel.send("https://nhentai.net/g/{}/".format(id))
+        emojii = "<:AquaThumbsUp:725330104200331334>>"
+        await hentai_message.add_reaction(emojii)
 
     if message.content.startswith("!help"):
         await message.channel.send(help_text)
