@@ -4,12 +4,9 @@ help_text = "Konnichiwa!!\n!hello = I'll greet you back\n!streaming = I'll tell 
 import json
 import requests
 import os
-
 from random import randrange
-
 import discord
 from discord.ext import commands
-
 from jikanpy import AioJikan
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
@@ -18,7 +15,6 @@ ENV_STATIC = os.path.join(APP_ROOT, '.env')
 with open(ENV_STATIC) as env_file:
     token = env_file.readline().strip()
 
-bot = commands.Bot(command_prefix='!')
 client = discord.Client()
 
 def get_hentai():
