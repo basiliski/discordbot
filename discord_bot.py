@@ -1,9 +1,9 @@
 streamsource_text = "~ twist.moe\n+ muistaa mihin jäi\n+ clean interface\n+ hyvä laatu\n- joskus ruuhkaa ja bufferoi paljon\n\n~ animeultima.to\n+ Jaksot lataa nopeesti ja heti\n+ iso valikoima sarjoja\n- sivu ajoittain alhaalla\n- verkkosivu tosi hidas muuten\n\n~ animeflix.io\n+/- literally animeultima mutta muka hienommalla intefacella :smile:"
 help_text = "Konnichiwa!!\n!hello = I'll greet you back\n!streaming = I'll tell you good anime streaming sites\n!search (anime name here) = I'll respond with url to Mal and some information\n!hentai = <:Meguminlewd:725330104065982464>"
-token = 'token here'
 
 import json
 import requests
+import os
 
 from random import randrange
 
@@ -11,6 +11,12 @@ import discord
 from discord.ext import commands
 
 from jikanpy import AioJikan
+
+APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
+ENV_STATIC = os.path.join(APP_ROOT, '.env')
+
+with open(ENV_STATIC) as env_file:
+    token = env_file.readline().strip()
 
 bot = commands.Bot(command_prefix='!')
 client = discord.Client()
