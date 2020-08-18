@@ -1,5 +1,5 @@
 #dependencies:
-#python3 -m pip install -U discord.property
+#python3 -m pip install -U discord.py
 #pip install jikanpy
 
 streamsource_text = "~ twist.moe\n+ muistaa mihin jäi\n+ clean interface\n+ hyvä laatu\n- joskus ruuhkaa ja bufferoi paljon\n\n~ animeultima.to\n+ Jaksot lataa nopeesti ja heti\n+ iso valikoima sarjoja\n- sivu ajoittain alhaalla\n- verkkosivu tosi hidas muuten\n\n~ animeflix.io\n+/- literally animeultima mutta muka hienommalla intefacella :smile:"
@@ -10,7 +10,7 @@ import requests
 import os
 from random import randrange
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 from jikanpy import AioJikan
 
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
@@ -19,7 +19,20 @@ ENV_STATIC = os.path.join(APP_ROOT, '.env')
 with open(ENV_STATIC) as env_file:
     token = env_file.readline().strip()
 
-client = discord.Client()
+bot = commands.Bot("!")
+
+def get_covid():
+
+    url = "https://api.covid19api.com/total/country/finland"
+
+    payload = {}
+    headers= {}
+
+    response = requests.request("GET", url, headers=headers, data = payload)
+    response_json = response.text.encode('utf8')
+    response = json.loads(response_json)
+    latest_info = response[-1]
+    return latest_info
 
 def get_hentai():
 
@@ -45,14 +58,20 @@ def get_hentai():
     id = media_id_data["id"]
     return id
 
-@client.event
+@bot.event
 async def on_ready():
-    print("We have logged in as {0.user}".format(client))
+    print("We have logged in as {0.user}".format(bot))
 
-@client.event
+@bot.event
 async def on_message(message):
-    if message.author == client.user:
+    if message.author == bot.user:
         return
+
+    if message.content.startswith("!covid"):
+        
+        message_channel = bot.get_channel(484443833308938241) #target channel id
+        latest_info = get_covid()
+        await message_channel.send("PÄIVÄN KORONASETIT KOTIMAASSA\n```\nConfirmed: {}\nDeaths: {}\nRecovered: {}\nActive: {}\n```".format(latest_info["Confirmed"], latest_info["Deaths"], latest_info["Recovered"], latest_info["Active"]))
 
     if message.content.startswith("!hentai"):
 
@@ -104,15 +123,28 @@ async def on_message(message):
             await message.channel.send(serie_dict.get("url"))
             await message.channel.send(anime_str)
 
-@client.event
+@bot.event
 async def on_guild_channel_delete(channel):
     main_channel = client.get_channel(719608860599648289)
     await main_channel.send("Channel {} was just yeeted".format(channel.name))
 
-@client.event
+@bot.event
 async def on_guild_channel_create(channel):
     main_channel = client.get_channel(719608860599648289)
     await main_channel.send("Channel {} was just created. Have fun!".format(channel.name))
 
+@tasks.loop(hours=24)
+async def called_once_a_day():
+    message_channel = bot.get_channel(484443833308938241)
+    print(f"Got channel {message_channel}")
+    latest_info = get_covid()
+    await message_channel.send("PÄIVÄN KORONASETIT KOTIMAASSA\n```\nConfirmed: {}\nDeaths: {}\nRecovered: {}\nActive: {}\n```".format(latest_info["Confirmed"], latest_info["Deaths"], latest_info["Recovered"], latest_info["Active"]))
 
-client.run(token)
+@called_once_a_day.before_loop
+async def before():
+    await bot.wait_until_ready()
+    print("Finished waiting")
+
+
+called_once_a_day.start()
+bot.run(token)
