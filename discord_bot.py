@@ -32,7 +32,8 @@ def get_covid():
     response_json = response.text.encode('utf8')
     response = json.loads(response_json)
     latest_info = response[-1]
-    return latest_info
+    yesterdays_info = response[-2]
+    return latest_info, yesterdays_info
 
 def get_hentai():
 
@@ -68,10 +69,9 @@ async def on_message(message):
         return
 
     if message.content.startswith("!covid"):
-        
-        message_channel = bot.get_channel(484443833308938241) #target channel id
-        latest_info = get_covid()
-        await message_channel.send("PÄIVÄN KORONASETIT KOTIMAASSA\n```\nConfirmed: {}\nDeaths: {}\nRecovered: {}\nActive: {}\n```".format(latest_info["Confirmed"], latest_info["Deaths"], latest_info["Recovered"], latest_info["Active"]))
+
+        latest_info, yesterdays_info = get_covid()
+        await message.channel.send("PÄIVÄN KORONASETIT KOTIMAASSA\n```diff\n- {} uutta tapausta```\n```Confirmed: {}\nDeaths: {}\nRecovered: {}\nActive: {}\n```".format(latest_info["Confirmed"] - yesterdays_info["Confirmed"], latest_info["Confirmed"], latest_info["Deaths"], latest_info["Recovered"], latest_info["Active"]))
 
     if message.content.startswith("!hentai"):
 
@@ -125,20 +125,28 @@ async def on_message(message):
 
 @bot.event
 async def on_guild_channel_delete(channel):
-    main_channel = client.get_channel(719608860599648289)
+    if channel.guild.id == 484443832856084500:
+        channel_to_send = 484696393110519817 #meta
+    elif channel.guild.id == 719608860599648286:
+        channel_to_send = 719608860599648289 #yeet
+    main_channel = bot.get_channel(channel_to_send)
     await main_channel.send("Channel {} was just yeeted".format(channel.name))
 
 @bot.event
 async def on_guild_channel_create(channel):
-    main_channel = client.get_channel(719608860599648289)
+    if channel.guild.id == 484443832856084500:
+        channel_to_send = 484696393110519817 #meta
+    elif channel.guild.id == 719608860599648286:
+        channel_to_send = 719608860599648289 #yeet
+    main_channel = bot.get_channel(channel_to_send)
     await main_channel.send("Channel {} was just created. Have fun!".format(channel.name))
 
 @tasks.loop(hours=24)
 async def called_once_a_day():
-    message_channel = bot.get_channel(484443833308938241)
+    message_channel = bot.get_channel(484696393110519817)
     print(f"Got channel {message_channel}")
-    latest_info = get_covid()
-    await message_channel.send("PÄIVÄN KORONASETIT KOTIMAASSA\n```\nConfirmed: {}\nDeaths: {}\nRecovered: {}\nActive: {}\n```".format(latest_info["Confirmed"], latest_info["Deaths"], latest_info["Recovered"], latest_info["Active"]))
+    latest_info, yesterdays_info = get_covid()
+    await message_channel.send("PÄIVÄN KORONASETIT KOTIMAASSA\n```diff\n- {} uutta tapausta```\n```Confirmed: {}\nDeaths: {}\nRecovered: {}\nActive: {}\n```".format(latest_info["Confirmed"] - yesterdays_info["Confirmed"], latest_info["Confirmed"], latest_info["Deaths"], latest_info["Recovered"], latest_info["Active"]))
 
 @called_once_a_day.before_loop
 async def before():
