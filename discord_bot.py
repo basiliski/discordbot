@@ -68,6 +68,9 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
+    if message.content.includes("@valocunts"):
+        await message.add_reaction("<:valorant:711969962066968596>")
+
     if message.content.startswith("!covid"):
 
         latest_info, yesterdays_info = get_covid()
