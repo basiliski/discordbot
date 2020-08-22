@@ -68,8 +68,11 @@ async def on_message(message):
     if message.author == bot.user:
         return
 
-    if message.content.includes("@valocunts"):
+    if "@valocunts" in message.content:
         await message.add_reaction("<:valorant:711969962066968596>")
+
+    if "weebs = pedos" in message.content.lower():
+        await message.delete()
 
     if message.content.startswith("!covid"):
 
@@ -149,7 +152,7 @@ async def called_once_a_day():
     message_channel = bot.get_channel(484696393110519817)
     print(f"Got channel {message_channel}")
     latest_info, yesterdays_info = get_covid()
-    await message_channel.send("PÄIVÄN KORONASETIT KOTIMAASSA\n```diff\n- {} uutta tapausta```\n```Confirmed: {}\nDeaths: {}\nRecovered: {}\nActive: {}\n```".format(latest_info["Confirmed"] - yesterdays_info["Confirmed"], latest_info["Confirmed"], latest_info["Deaths"], latest_info["Recovered"], latest_info["Active"]))
+    #await message_channel.send("PÄIVÄN KORONASETIT KOTIMAASSA\n```diff\n- {} uutta tapausta```\n```Confirmed: {}\nDeaths: {}\nRecovered: {}\nActive: {}\n```".format(latest_info["Confirmed"] - yesterdays_info["Confirmed"], latest_info["Confirmed"], latest_info["Deaths"], latest_info["Recovered"], latest_info["Active"]))
 
 @called_once_a_day.before_loop
 async def before():
