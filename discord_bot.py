@@ -129,6 +129,25 @@ async def on_message(message):
             await message.channel.send(serie_dict.get("url"))
             await message.channel.send(anime_str)
 
+    if message.content.startswith("!bonk"):
+
+        horny_jail = bot.get_channel(486985950002544641)
+
+        #bonk everyone on the same voice channel
+        if message.content == "!bonk":
+            for vchannel in message.guild.voice_channels:
+                for member in vchannel.members:
+                    await member.move_to(horny_jail)
+
+        users_to_bonk = message.content.replace("!bonk ", "")
+        if len(message.mentions) > 0:
+            for member in message.mentions:
+                await member.move_to(horny_jail)
+        
+        await message.channel.send("BONK")
+
+            
+
 @bot.event
 async def on_guild_channel_delete(channel):
     if channel.guild.id == 484443832856084500:
