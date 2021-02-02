@@ -6,6 +6,7 @@ streamsource_text = "~ twist.moe\n+ muistaa mihin jäi\n+ clean interface\n+ hyv
 help_text = "Konnichiwa!!\n!hello = I'll greet you back\n!streaming = I'll tell you good anime streaming sites\n!search (anime name here) = I'll respond with url to Mal and some information\n!hentai = <:Meguminlewd:725330104065982464>"
 
 import json
+import shutil
 import requests
 import os
 from random import randrange
@@ -139,12 +140,22 @@ async def on_message(message):
                 for member in vchannel.members:
                     await member.move_to(horny_jail)
 
-        users_to_bonk = message.content.replace("!bonk ", "")
         if len(message.mentions) > 0:
             for member in message.mentions:
                 await member.move_to(horny_jail)
-        
-        await message.channel.send("BONK")
+
+        with requests.get("http://jaks.fi/bonk", stream=True) as r:
+            if r.status_code != 200:
+                await message.channel.send("BONK")
+                return
+            with open("img.png", "wb") as f:
+                r.raw.decode_content = True
+                shutil.copyfileobj(r.raw, f)
+
+        await message.channel.send(file=discord.File('img.png'))
+        os.remove("img.png")
+
+   
 
             
 
