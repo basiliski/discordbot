@@ -14,13 +14,16 @@ import discord
 from discord.ext import commands, tasks
 from jikanpy import AioJikan
 
+intents = discord.Intents.default()
+intents.members = True
+
 APP_ROOT = os.path.dirname(os.path.abspath(__file__))   # refers to application_top
 ENV_STATIC = os.path.join(APP_ROOT, '.env')
 
 with open(ENV_STATIC) as env_file:
     token = env_file.readline().strip()
 
-bot = commands.Bot("!")
+bot = commands.Bot("!", intents=intents)
 
 def get_covid():
 
@@ -138,7 +141,8 @@ async def on_message(message):
         if message.content == "!bonk":
             for vchannel in message.guild.voice_channels:
                 for member in vchannel.members:
-                    await member.move_to(horny_jail)
+                    if (not member.bot):
+                        await member.move_to(horny_jail)
 
         if len(message.mentions) > 0:
             for member in message.mentions:
@@ -190,5 +194,5 @@ async def before():
     print("Finished waiting")
 
 
-called_once_a_day.start()
+#called_once_a_day.start()
 bot.run(token)
