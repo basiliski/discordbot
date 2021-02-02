@@ -194,5 +194,5 @@ async def before():
     print("Finished waiting")
 
 
-#called_once_a_day.start()
+called_once_a_day.start()
 bot.run(token)
